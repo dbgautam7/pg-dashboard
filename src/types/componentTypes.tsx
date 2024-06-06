@@ -1,6 +1,4 @@
-import { InterventionType } from ".";
-
 export interface InterventionCardProps {
-  data: InterventionType;
+  data: any;
   statusHandler: () => void;
 }

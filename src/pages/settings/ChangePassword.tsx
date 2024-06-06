@@ -1,9 +1,11 @@
-import InputField from "../../components/UI/InputField";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { useChangePasswordMutation } from "../../hooks/useMutateData";
+import TextField from "../../components/UI/TextField";
+import { useToast } from "../../contexts/ToastContext";
 interface IInputs {
   currentPassword: string;
   newPassword: string;
-  confirmNewPassword: string;
+  confirmNewPassword?: string;
 }
 
 const ChangePassword = () => {
@@ -14,52 +16,60 @@ const ChangePassword = () => {
     formState: { errors },
   } = useForm<IInputs>();
 
-  const onSubmit: SubmitHandler<IInputs> = async (data) => {
-    console.log(data, "Data");
+  const changePasswordMutation = useChangePasswordMutation();
+  const { updateToast } = useToast();
+
+  const onSubmitHandler: SubmitHandler<IInputs> = async (data) => {
+    delete data.confirmNewPassword;
+
+    await changePasswordMutation.mutateAsync(["post", "", data], {
+      onSuccess: (res) => {
+        updateToast(res.message, "success");
+      },
+      onError: (error: any) => {
+        const errorMessage = error?.response?.data?.error
+          ? error?.response?.data?.error
+          : error.message;
+        updateToast(errorMessage, "error");
+      },
+    });
   };
-  console.log(errors, "error");
-  console.log(watch("currentPassword"), "wch");
+
   return (
     <form
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit(onSubmitHandler)}
       className="space-y-8 rounded bg-white py-6 px-8 shadow"
     >
-      <section className="flex gap-6 flex-wrap">
-        {/* <input
+      <section className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3  gap-6 flex-wrap">
+        <TextField
           {...register("currentPassword", {
             required: "Current Password is required",
           })}
-          //   label="Old Password"
-          placeholder="Enter old password"
+          placeholder="Old password"
           type="password"
           name="currentPassword"
-        /> */}
-        <InputField
-          {...register("currentPassword", {
-            required: "Current Password is required",
-          })}
-          label="Old Password"
-          placeholder="Enter old password"
-          type="password"
-          name="currentPassword"
+          errorMessage={errors.currentPassword?.message}
         />
-        <InputField
+        <TextField
           {...register("newPassword", {
             required: "New Password is required",
           })}
-          label="New Password"
-          placeholder="Enter new password"
+          placeholder="New password"
           type="password"
-          name="newPassword"
+          errorMessage={errors.newPassword?.message}
         />
-        <InputField
+        <TextField
           {...register("confirmNewPassword", {
             required: "Confirm Password is required",
+            validate: (val: string | undefined) => {
+              if (typeof val === "string" && watch("newPassword") !== val) {
+                return "Your passwords do not match";
+              }
+            },
           })}
-          label="Confirm Password"
-          placeholder="Enter new password again"
+          placeholder="Confirm password"
           type="password"
-          name="confirmNewPassword"
+          errorMessage={errors.confirmNewPassword?.message}
         />
       </section>
       <section className="flex justify-end gap-8">

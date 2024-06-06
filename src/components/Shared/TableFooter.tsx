@@ -4,7 +4,7 @@ import Select from "../UI/Select";
 import Pagination from "../UI/Pagination";
 
 interface Props<T extends object> {
-  table: Table<T>;
+  table: Table<T> | any;
   totalEntries: number;
 }
 
@@ -31,7 +31,7 @@ export default function TableFooter<T extends object>({
       <div className="flex items-center gap-4">
         <span className="text-grayText">Items per page</span>
         <Select
-          options={["7", "10", "20", "30", "40", "50"]}
+          // options={["7", "10", "20", "30", "40", "50"]}
           value={table.getState().pagination.pageSize.toString()}
           onValueChange={(value) => table.setPageSize(Number(value))}
           triggerClassName="py-0.5"

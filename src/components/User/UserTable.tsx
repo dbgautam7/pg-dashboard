@@ -1,40 +1,40 @@
 import { createColumnHelper } from "@tanstack/react-table";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 import Table from "../Shared/Table";
-import Tooltip from "../UI/Tooltip";
-import { DeleteSvg, EditSvg, UserCircleSvg } from "../../icons/AllSvgs";
-import AlertDialog from "../UI/AlertDialog";
-import { deleteAlertDescription } from "../../utils/constants";
+import { EditSvg } from "../../icons/AllSvgs";
 import Search from "../Shared/Search";
 import UserFormModal from "./UserFormModal";
 import TableFilters from "../Shared/TableFilters";
+import LoadingSvg from "../../assets/loading.svg";
+import { useToggleUserStatus, useUsersData } from "../../hooks/useQueryData";
+import { IUserData } from "../../types";
+import Error from "../Shared/Error";
+import Switch from "../UI/Switch";
+import Tooltip from "../UI/Tooltip";
+import { useUpdateProfileMutation } from "../../hooks/useMutateData";
+import { SubmitHandler } from "react-hook-form";
+import { useToast } from "../../contexts/ToastContext";
+import SearchSelect from "../UI/SearchSelect";
 
-import { useUsersData } from "../../hooks/useQueryData";
-import { UserType } from "../../types";
+const columnHelper = createColumnHelper<IUserData>();
 
-const columnHelper = createColumnHelper<UserType>();
+export default function UserTable() {
+  const [selectedId, setSelectedId] = useState<number>();
+  const { data, isLoading, isError, refetch } = useUsersData();
+  const { updateToast } = useToast();
+  useToggleUserStatus(selectedId);
 
-export default function UserTable({ handleUpdate }: any) {
-  const { data, isLoading, isError } = useUsersData();
   const columns = useMemo(
     () => [
-      columnHelper.accessor("firstName", {
-        header: "First Name",
-        cell: ({ getValue }) => (
-          <div className="flex items-center gap-4">
-            <UserCircleSvg className="h-7 text-grayText" />
-            <span className="font-medium">{getValue()}</span>
-          </div>
-        ),
+      columnHelper.accessor("id", {
+        header: "Id",
       }),
-      columnHelper.accessor("lastName", {
-        header: "Last Name",
-        cell: ({ getValue }) => (
-          <div className="flex items-center gap-4">
-            <span className="font-medium">{getValue()}</span>
-          </div>
-        ),
+      columnHelper.accessor("current_role_id", {
+        header: "Role",
+      }),
+      columnHelper.accessor("name", {
+        header: "Name",
       }),
       columnHelper.accessor("email", {
         header: "Email",
@@ -42,87 +42,97 @@ export default function UserTable({ handleUpdate }: any) {
       columnHelper.accessor("phone", {
         header: "Phone",
       }),
-      columnHelper.accessor("isActive", {
+      columnHelper.accessor("status", {
         header: "Status",
-        cell: ({ getValue }) => (
-          // <div className="flex items-center gap-4">
-          <span
-            className="font-thin"
-            style={
-              getValue()
-                ? { color: "rgb(34 197 94)" }
-                : { color: "rgb(220 38 38)" }
-            }
-          >
-            {getValue() ? "Active" : "Inactive"}
-          </span>
-          // </div>
-        ),
+        id: "status",
+        cell: ({ row }) => {
+          console.log(row.original, "row");
+          return (
+            <Switch
+              key={row.original.id}
+              active={row.original.status === "active" ? true : false}
+              changeHandler={() => {
+                setSelectedId(row.original.id);
+              }}
+            />
+          );
+        },
       }),
-
       columnHelper.display({
         id: "actions",
         header: "Actions",
-        cell: ({ row }) => (
-          <div className="flex gap-4">
-            <UserFormModal
-              isEdit={true}
-              data={row}
-              handleUpdate={handleUpdate}
-              triggerClassName="cursor-pointer text-grayHeading hover:text-primary"
+        cell: ({ row }) => {
+          return (
+            <div
+              className="flex items-start gap-4"
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedId(row.original.id);
+              }}
             >
-              <Tooltip content="Edit" asChild>
-                <span>
-                  <EditSvg className="h-6" />
-                </span>
-              </Tooltip>
-            </UserFormModal>
-
-            <AlertDialog
-              description={deleteAlertDescription}
-              btnText="Yes, delete data"
-              // eslint-disable-next-line @typescript-eslint/no-empty-function
-              clickHandler={() => {}}
-              triggerClassName="flex cursor-pointer items-center text-grayHeading hover:text-dangerDark"
-            >
-              <Tooltip content="Delete" asChild>
-                <span>
-                  <DeleteSvg className="h-6" />
-                </span>
-              </Tooltip>
-            </AlertDialog>
-          </div>
-        ),
+              <UserFormModal
+                isEdit={true}
+                data={row?.original}
+                handleUpdate={handleUpdateUser}
+                triggerClassName="cursor-pointer text-grayHeading hover:text-primary"
+              >
+                <Tooltip content="Edit" asChild>
+                  <span>
+                    <EditSvg className="h-6" />
+                  </span>
+                </Tooltip>
+              </UserFormModal>
+            </div>
+          );
+        },
       }),
     ],
     []
   );
 
+  const updateProfileMutation = useUpdateProfileMutation(selectedId);
+
+  const handleUpdateUser: SubmitHandler<IUserData> = async (data) => {
+    await updateProfileMutation.mutateAsync(["put", "", data], {
+      onSuccess: (res) => {
+        refetch();
+        updateToast(res?.message, "success");
+      },
+      onError: (error: any) => {
+        const errorMessage = error?.response?.data?.error
+          ? error?.response?.data?.error
+          : error.message;
+        updateToast(errorMessage, "error");
+      },
+    });
+  };
+
   return (
     <section>
-      {(!isLoading || !isError) && (
+      {isLoading ? (
+        <img
+          src={LoadingSvg}
+          className="mx-auto mt-4 h-28"
+          alt="Loading Spinner"
+        />
+      ) : isError ? (
+        <Error />
+      ) : (
         <div className="mb-4 flex justify-between">
-          {/* <SearchSelect
-            className="w-72 text-[15px] shadow"
-            options={[
-              { value: 1, label: 'All Users' },
-              { value: 2, label: 'Active Users' },
-              { value: 3, label: 'Inactive Users' },
-              { value: 4, label: 'Free Signup (Never Subscribed)' },
-            ]}
-            defaultValue={{ value: 1, label: 'All Users' }}
-          /> */}
           <div className="flex gap-4">
             <TableFilters
-              sortOptions={["Name", "Email", "User Date", "Active Status"]}
+              sortOptions={[
+                { value: "name", label: "Name" },
+                { value: "email", label: "Email" },
+              ]}
             />
             <Search placeholder="Search Users" classname="shadow w-[316px]" />
           </div>
         </div>
       )}
-      {data?.results && (
+      {data && (
         <Table
-          data={data.results}
+          data={data}
           columns={columns}
           isError={isError}
           isLoading={isLoading}

@@ -28,7 +28,6 @@ export default function LogInForm() {
         `${import.meta.env.VITE_BACKEND_BASE_URL}/user/login`,
         data
       );
-      console.log(response, response?.status, "response");
       const resData = response?.data;
       if (resData) {
         setAuth({ token: resData.token });
@@ -36,6 +35,7 @@ export default function LogInForm() {
           token: resData.token,
           user: {},
         });
+
         updateToast(resData.message, "success");
         navigate("/");
       } else {

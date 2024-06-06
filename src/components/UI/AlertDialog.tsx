@@ -14,7 +14,7 @@ const AlertDialog = ({
   children,
   clickHandler,
   description,
-  closeHandler = () => {},
+  closeHandler = () => undefined,
   triggerClassName = "",
 }: Props) => (
   <Alert.Root onOpenChange={(open) => open === false && closeHandler()}>

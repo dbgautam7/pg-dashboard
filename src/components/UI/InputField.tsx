@@ -25,7 +25,6 @@ const InputField: FC<Props> = forwardRef<refType, Props>(
     },
     ref
   ) {
-    console.log(rest, "rest");
     const inputClasses =
       "peer rounded border border-grayBorderDark py-2 px-3 text-[14.5px] placeholder:italic placeholder:text-grayText hover:border-grayText focus:border-primary focus:outline-none";
     return (
@@ -44,7 +43,7 @@ const InputField: FC<Props> = forwardRef<refType, Props>(
           <Select
             name={name}
             placeholder="Role"
-            options={options}
+            // options={options}
             triggerMinWidth={130}
             position="popper"
             triggerClassName="h-10 hover:border-grayText"

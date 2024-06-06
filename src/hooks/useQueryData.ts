@@ -1,46 +1,41 @@
 import { useQuery } from "@tanstack/react-query";
-import type {
-  UserType,
-  ListType,
-  InterventionType,
-  UserResponseType,
-  InterventionResponseType,
-  IPostResponseType,
-} from "../types";
-import { backendApi } from "../utils/axios";
-import { transformIntervention, transformUsers } from "../utils/transform";
+import useAxiosPrivate from "./useAxiosPrivate";
 
 const pageSize = 10;
 
-export const useUsersData = () =>
-  useQuery<ListType<UserType>>(["users"], async () => {
-    const { data } = await backendApi.get(`user/?page_size=${pageSize}`);
-    data.results = data.results.map((each: UserResponseType) =>
-      transformUsers(each)
-    );
+export const useQueryData = (
+  key: string[],
+  path: string,
+  params = "",
+  enabled = true
+) => {
+  const backendApi = useAxiosPrivate();
 
-    return data;
+  return useQuery({
+    queryKey: [key, params],
+    refetchOnWindowFocus: false,
+    queryFn: () =>
+      backendApi
+        .get(path, {
+          params,
+        })
+        .then((res) => res.data),
+    enabled,
   });
+};
 
-export const useInterventionsData = () =>
-  useQuery<ListType<InterventionType>>(["interventions"], async () => {
-    const { data } = await backendApi.get(
-      `super-dashboard/intervention/?page_size=${pageSize}`
-    );
-    data.results = data.results.map((each: InterventionResponseType) =>
-      transformIntervention(each)
-    );
-    return data;
-  });
+export const useUsersData = () => useQueryData(["users"], "/user/user-list");
 
-export const useSuperPostsData = () =>
-  useQuery<ListType<IPostResponseType>>(["users"], async () => {
-    const { data } = await backendApi.get(
-      `super-dashboard/post/?page_size=${pageSize}`
-    );
-    data.results = data.results.map((each: UserResponseType) =>
-      transformUsers(each)
-    );
+export const useUserInfo = () => useQueryData(["user-info"], "/user/user-info");
 
-    return data;
-  });
+export const useSystemConfigList = () =>
+  useQueryData(["system-config-list"], "/ct/system-config-list");
+
+export const usePaymentInTransactionData = () =>
+  useQueryData(["payment-in-transaction"], "/ct/list-payment-in-transaction");
+
+export const usePaymentOutTransactionData = () =>
+  useQueryData(["payment-out-transaction"], "/ct/list-payment-out-transaction");
+
+export const useToggleUserStatus = (id: number | undefined) =>
+  useQueryData(["user-status-update"], `/user/updateStatus?id=${id}`, "", !!id);

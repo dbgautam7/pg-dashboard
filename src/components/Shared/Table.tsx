@@ -17,7 +17,7 @@ import EmptySvg from "../../assets/empty.svg";
 import LoadingSvg from "../../assets/loading.svg";
 import { SortSvg, ChevronDownSvg, ChevronUpSvg } from "../../icons/AllSvgs";
 
-interface Props<T extends { idx: string }> {
+interface Props<T> {
   data: T[];
   columns: ColumnDef<T, any>[];
   isLoading: boolean;
@@ -31,7 +31,7 @@ interface Props<T extends { idx: string }> {
   pageSize?: number;
 }
 
-export default function Table<T extends { idx: string }>({
+export default function Table<T>({
   data,
   columns,
   isLoading,
@@ -47,7 +47,7 @@ export default function Table<T extends { idx: string }>({
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState({});
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const table = useReactTable({
     data,
@@ -75,7 +75,7 @@ export default function Table<T extends { idx: string }>({
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
-                    className={`group py-4 text-start font-semibold first:pl-4 last:pr-4 ${
+                    className={`group whitespace-nowrap py-4 text-start font-semibold first:pl-4 last:pr-4 ${
                       header.column.getCanSort()
                         ? "cursor-pointer select-none"
                         : ""
@@ -116,7 +116,7 @@ export default function Table<T extends { idx: string }>({
                     ? "hover:bg-primaryHover"
                     : ""
                 } ${allowHover ? "cursor-pointer" : "cursor-default"}`}
-                onClick={() => allowHover && navigate(row.original.idx)}
+                // onClick={() => allowHover && navigate(row.original.id)}
               >
                 {row.getVisibleCells().map((cell) => (
                   <td key={cell.id} className="py-4 first:pl-4">

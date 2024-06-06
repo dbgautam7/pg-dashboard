@@ -1,14 +1,15 @@
 import { FC, HTMLProps, forwardRef, useState } from "react";
-import { EyeOpenSvg, EyeClosedSvg } from "../../icons/AllSvgs";
+import { EyeOpenSvg, EyeClosedSvg, LockSvg } from "../../icons/AllSvgs";
 
 interface Props extends HTMLProps<HTMLInputElement> {
-  Icon: ({ className }: { className: string }) => JSX.Element;
+  Icon?: ({ className }: { className: string }) => JSX.Element;
   errorMessage?: string;
+  placeholder: string;
 }
 
 const TextField: FC<Props> = forwardRef<HTMLInputElement, Props>(
   function TextFieldComponent(
-    { placeholder, errorMessage, Icon, ...rest },
+    { placeholder, errorMessage, Icon = LockSvg, ...rest },
     ref
   ) {
     const [hidePassword, setHidePassword] = useState(true);
@@ -31,10 +32,12 @@ const TextField: FC<Props> = forwardRef<HTMLInputElement, Props>(
               rest.type === "password" && !hidePassword ? "text" : rest.type
             }
           />
-          <Icon className="absolute left-4 h-6 w-6 text-grayText peer-hover:text-blackText peer-focus:text-primary" />
+          {Icon && (
+            <Icon className="absolute left-4 h-6 w-6 text-grayText peer-hover:text-blackText peer-focus:text-primary" />
+          )}
           <label
             htmlFor={rest.name}
-            className="pointer-events-none absolute left-12 origin-left -translate-y-6 scale-90 rounded-full bg-white px-2 text-grayText transition-transform duration-300 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:-translate-y-6 peer-focus:scale-90 peer-focus:text-primary"
+            className="pointer-events-none absolute left-12 origin-left -translate-y-6 scale-90 rounded-full bg-white px-2 text-grayText transition-transform duration-300 peer-placeholder-shown:translate-y-0 peer-placeholder-shown:scale-100 peer-focus:-translate-y-6 peer-focus:scale-90 peer-focus:text-primary whitespace-nowrap"
           >
             {placeholder}
           </label>

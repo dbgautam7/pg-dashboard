@@ -1,31 +1,56 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import Select from "../UI/Select";
-import { CrossSvg } from "../../icons/AllSvgs";
+import { UndoSvg } from "../../icons/AllSvgs";
+import { ISelectOptions } from "../../types";
 
 interface Props {
-  sortOptions: string[];
+  sortOptions: ISelectOptions[];
   disabled?: boolean;
+  sortChangeHandler?: (value: string) => void;
+  orderChangeHandler?: (value: string) => void;
+  clearFilterHandler?: () => void;
+  sort?: {
+    by: string;
+    order: string;
+  };
 }
 
-export default function TableFilters({ sortOptions, disabled = false }: Props) {
-  const [sortBy, setSortBy] = useState<string>();
-  const [sortOrder, setSortOrder] = useState<string>();
-
+export default function TableFilters({
+  sortOptions,
+  disabled = false,
+  sortChangeHandler,
+  orderChangeHandler,
+  clearFilterHandler,
+  sort,
+}: Props) {
+  const [sortBy, setSortBy] = useState(sort?.by);
+  const [sortOrder, setSortOrder] = useState(sort?.order);
   const [key, setKey] = useState(0); // To force re-render
 
+  useEffect(() => {
+    if (!sortBy) setSortBy(sortOptions[0].value);
+    if (!sortOrder) setSortOrder("ascending");
+  }, [sortOptions]);
+
   return (
-    <div className="flex gap-4">
-      {sortBy && (
+    <div className="flex flex-wrap gap-4">
+      {(sort?.by !== sortBy || sortOrder !== sort?.order) && (
         <button
           onClick={() => {
-            setSortBy(undefined);
-            setSortOrder(undefined);
+            if (sort) {
+              setSortBy(sort.by);
+              setSortOrder(sort.order);
+            } else {
+              setSortBy(undefined);
+              setSortOrder(undefined);
+            }
             setKey((prev) => prev + 1);
+            clearFilterHandler?.();
           }}
-          className="self-center rounded border border-primary p-0.5 text-primary shadow transition-colors duration-200 hover:bg-primary hover:text-whiteText"
+          className="h-full self-center rounded border border-primary p-0.5 text-primary shadow transition-colors duration-200 hover:bg-primary hover:text-whiteText"
         >
-          <CrossSvg className="h-5" />
+          <UndoSvg className="h-5" />
         </button>
       )}
       <Select
@@ -34,17 +59,26 @@ export default function TableFilters({ sortOptions, disabled = false }: Props) {
         triggerMinWidth={130}
         position="popper"
         value={sortBy}
-        onValueChange={setSortBy}
+        onValueChange={(value) => {
+          sortChangeHandler?.(value);
+          setSortBy(value);
+        }}
         key={key}
         disabled={disabled}
       />
       <Select
         placeholder="Order By"
-        options={["Ascending", "Descending"]}
+        options={[
+          { value: "ascending", label: "Ascending" },
+          { value: "descending", label: "Descending" },
+        ]}
         triggerMinWidth={130}
         position="popper"
         value={sortOrder}
-        onValueChange={setSortOrder}
+        onValueChange={(value) => {
+          orderChangeHandler?.(value);
+          setSortOrder(value);
+        }}
         disabled={!sortBy}
         key={key + 10}
       />

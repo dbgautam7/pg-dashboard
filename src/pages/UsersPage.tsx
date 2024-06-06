@@ -1,30 +1,31 @@
+import { SubmitHandler } from "react-hook-form";
 import UserFormModal from "../components/User/UserFormModal";
 import UserTable from "../components/User/UserTable";
 import { useToast } from "../contexts/ToastContext";
-import { useSuperUserOpsMutation } from "../hooks/useMutateData";
+import { useCreateUserMutation } from "../hooks/useMutateData";
 import { AddSvg, TableExportSvg } from "../icons/AllSvgs";
 import PageWrapper from "../layouts/PageWrapper";
+import { IUserData } from "../types";
+import { useState } from "react";
 
 export default function UsersPage() {
-  const userMutation = useSuperUserOpsMutation();
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const { updateToast } = useToast();
-  const handleCreate = async (data: any) => {
-    data.role = ["Super Dashboard Manager"];
-    const postData = {
-      first_name: data.firstName,
-      last_name: data.lastName,
-      email: data.email,
-      phone: data.phone,
-      password: data.password,
-      role: data.role,
-    };
-    await userMutation.mutateAsync(["post", "add/", postData]);
-    if (userMutation.isSuccess) {
-      updateToast("Created account successfully", "success");
-    }
-    if (userMutation.error) {
-      updateToast("error occcures", "error");
-    }
+
+  const createUserMutation = useCreateUserMutation();
+  const handleCreateUser: SubmitHandler<IUserData> = async (data) => {
+    await createUserMutation.mutateAsync(["post", "", data], {
+      onSuccess: (res) => {
+        setIsModalOpen(false);
+        updateToast(res?.message, "success");
+      },
+      onError: (error: any) => {
+        const errorMessage = error?.response?.data?.error
+          ? error?.response?.data?.error
+          : error.message;
+        updateToast(errorMessage, "error");
+      },
+    });
   };
 
   return (
@@ -38,11 +39,13 @@ export default function UsersPage() {
               <span>Export</span>
             </button>
             <UserFormModal
-              handleCreate={handleCreate}
+              isModalOpen={isModalOpen}
+              setIsModalOpen={setIsModalOpen}
+              handleCreate={handleCreateUser}
               triggerClassName="btn-primary flex items-center gap-2 py-2 pl-4 pr-6"
             >
               <AddSvg className="h-6" />
-              <span>Add User</span>
+              <span onClick={() => setIsModalOpen(true)}>Add User</span>
             </UserFormModal>
           </div>
         </section>

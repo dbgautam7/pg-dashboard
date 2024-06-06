@@ -6,11 +6,11 @@ import BaseLayout from "./layouts/BaseLayout";
 import AuthPage from "./pages/AuthPage";
 import DashboardPage from "./pages/DashboardPage";
 import UsersPage from "./pages/UsersPage";
-import InterventionsPage from "./pages/Interventions";
-import InterventionDetail from "./pages/Interventions/InterventionDetail";
+
 import NotFoundPage from "./pages/NotFoundPage";
 import AuthGuard from "./utils/authGuard";
 import SettingsPage from "./pages/settings";
+import TransactionsPage from "./pages/TransactionPage";
 
 export default function App() {
   return (
@@ -22,10 +22,10 @@ export default function App() {
         <Route element={<BaseLayout />}>
           <Route index element={<DashboardPage />} />
           <Route path="users" element={<UsersPage />} />
-          <Route path="transactions" element={<InterventionsPage />} />
+          <Route path="transactions" element={<TransactionsPage />} />
           <Route
             path="interventions/:interventionId"
-            element={<InterventionDetail />}
+            // element={<InterventionDetail />}
           />
           <Route path="settings" element={<SettingsPage />} />
         </Route>
