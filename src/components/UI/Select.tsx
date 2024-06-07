@@ -9,7 +9,7 @@ import { ISelectOptions } from "../../types";
 interface Props {
   options?: ISelectOptions[];
   triggerClassName?: string;
-  value?: string;
+  value?: any;
   defaultValue?: string;
   onValueChange?: (value: string) => void;
   name?: string;

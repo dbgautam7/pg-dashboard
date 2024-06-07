@@ -42,7 +42,7 @@ const InputField: FC<Props> = forwardRef<refType, Props>(
         ) : type === "select" ? (
           <Select
             name={name}
-            placeholder="Role"
+            placeholder={placeholder}
             // options={options}
             triggerMinWidth={130}
             position="popper"

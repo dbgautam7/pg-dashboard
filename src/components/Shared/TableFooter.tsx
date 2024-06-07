@@ -18,7 +18,7 @@ export default function TableFooter<T extends object>({
   const totalPageCount = Math.ceil(totalEntries / pageSize);
 
   return (
-    <div className="flex items-center justify-between pt-4 text-[15px] font-medium">
+    <div className="flex items-center justify-between pt-4 text-[15px] font-medium px-4">
       <span className="text-grayText">
         Showing {currentPage * pageSize + 1} to{" "}
         {Math.min(pageSize * (currentPage + 1), totalEntries)} of {totalEntries}{" "}

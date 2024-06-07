@@ -31,16 +31,21 @@ export interface ISystemConfigList {
 }
 
 export interface IPayTransactionList {
+  id: number;
+  order_number: string;
+  detail_order_number: string;
+  gateway: string;
+  username: string;
+  amount: number;
+  status: string;
+  created_at: Date;
+  updated_at: Date;
   ct_merchant_id: number;
   member_id: number;
-  username: string;
-  order_number: string;
-  amount: number;
-  response: string;
-  status: boolean;
+  response: null;
 }
 
 export interface ISelectOptions {
-  value: string;
+  value: string | number;
   label: string;
 }

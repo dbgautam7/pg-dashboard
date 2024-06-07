@@ -23,7 +23,6 @@ export const useMutate = (
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey }),
     onError: (err: AxiosError) => {
-      console.log(err, "Errrrrrr");
       return err?.response?.data;
     },
   });

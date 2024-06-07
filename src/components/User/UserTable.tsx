@@ -32,6 +32,14 @@ export default function UserTable() {
       }),
       columnHelper.accessor("current_role_id", {
         header: "Role",
+        id: "current_role_id",
+        cell: ({ row }) => {
+          return (
+            <p>
+              {row.original.current_role_id === 1 ? "Super Admin" : "Admin"}
+            </p>
+          );
+        },
       }),
       columnHelper.accessor("name", {
         header: "Name",
@@ -46,7 +54,6 @@ export default function UserTable() {
         header: "Status",
         id: "status",
         cell: ({ row }) => {
-          console.log(row.original, "row");
           return (
             <Switch
               key={row.original.id}

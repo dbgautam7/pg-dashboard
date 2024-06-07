@@ -1,45 +1,52 @@
 import { createColumnHelper } from "@tanstack/react-table";
-import { useMemo } from "react";
-
+import { useEffect, useMemo, useState } from "react";
 import Table from "../Shared/Table";
-import Tooltip from "../UI/Tooltip";
-import { DeleteSvg, EditSvg, UserCircleSvg } from "../../icons/AllSvgs";
-import AlertDialog from "../UI/AlertDialog";
-import { deleteAlertDescription } from "../../utils/constants";
 import Search from "../Shared/Search";
-import TableFilters from "../Shared/TableFilters";
+import LoadingSvg from "../../assets/loading.svg";
 
-import {
-  usePaymentInTransactionData,
-  useUsersData,
-} from "../../hooks/useQueryData";
-import { IPayTransactionList } from "../../types";
+import { usePaymentInTransactionData } from "../../hooks/useQueryData";
+import { IPayTransactionList, ISelectOptions } from "../../types";
+import SearchSelect from "../UI/SearchSelect";
+import Error from "../Shared/Error";
 
 const columnHelper = createColumnHelper<IPayTransactionList>();
 
-export default function TransactionTable({ handleUpdate }: any) {
-  const { data, isLoading, isError } = usePaymentInTransactionData();
-  console.log(data, "Data");
+export default function TransactionTable() {
+  const [selectedFilter, setSelectedFilter] = useState<ISelectOptions | null>({
+    value: "in",
+    label: "Payment In Transaction",
+  });
+  const { data, isLoading, isError, refetch } = usePaymentInTransactionData(
+    selectedFilter?.value
+  );
+
+  const filterOptions: ISelectOptions[] = [
+    { value: "in", label: "Payment In Transaction" },
+    { value: "out", label: "Payment Out Transaction" },
+  ];
+
   const columns = useMemo(
     () => [
-      columnHelper.accessor("ct_merchant_id", {
-        header: "CT Merchant Id",
+      columnHelper.accessor("id", {
+        header: "Id",
       }),
-      columnHelper.accessor("member_id", {
-        header: "Member Id",
+      columnHelper.accessor("order_number", {
+        header: "Order No.",
       }),
       columnHelper.accessor("username", {
         header: "Username",
       }),
-      columnHelper.accessor("order_number", {
-        header: "Order Number",
+      columnHelper.accessor("gateway", {
+        header: "Gateway",
       }),
       columnHelper.accessor("amount", {
         header: "Amount",
       }),
-      columnHelper.accessor("response", {
-        header: "Comment",
+
+      columnHelper.accessor("member_id", {
+        header: "Member Id",
       }),
+
       columnHelper.accessor("status", {
         header: "Status",
       }),
@@ -47,36 +54,44 @@ export default function TransactionTable({ handleUpdate }: any) {
     []
   );
 
+  useEffect(() => {
+    refetch();
+  }, [selectedFilter?.value]);
+
   return (
     <section>
-      {(!isLoading || !isError) && (
-        <div className="mb-4 flex justify-between">
-          {/* <SearchSelect
-            className="w-72 text-[15px] shadow"
-            options={[
-              { value: 1, label: 'All Users' },
-              { value: 2, label: 'Active Users' },
-              { value: 3, label: 'Inactive Users' },
-              { value: 4, label: 'Free Signup (Never Subscribed)' },
-            ]}
-            defaultValue={{ value: 1, label: 'All Users' }}
-          /> */}
-          <div className="flex gap-4">
-            {/* <TableFilters sortOptions={["Status", "Amount"]} /> */}
-            <Search
-              placeholder="Search Transactions"
-              classname="shadow w-[316px]"
-            />
-          </div>
+      <div className="mb-4 flex justify-between">
+        <SearchSelect
+          className="w-72 text-[15px] shadow"
+          options={filterOptions}
+          defaultValue={selectedFilter}
+          changeHandler={(option) => {
+            setSelectedFilter(option);
+          }}
+        />
+        <div className="flex gap-4">
+          <Search
+            placeholder="Search Transactions"
+            classname="shadow w-[316px]"
+          />
         </div>
-      )}
-      {data?.results && (
+      </div>
+
+      {isLoading ? (
+        <img
+          src={LoadingSvg}
+          className="mx-auto mt-4 h-28"
+          alt="Loading Spinner"
+        />
+      ) : isError ? (
+        <Error />
+      ) : (
         <Table
-          data={data.results}
-          columns={[]}
+          data={data}
+          columns={columns}
           isError={isError}
           isLoading={isLoading}
-          totalEntries={data.count}
+          totalEntries={data?.length}
           containsActions
           showFooter
         />

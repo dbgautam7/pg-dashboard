@@ -57,7 +57,7 @@ export default function DashboardPage() {
   return (
     <PageWrapper>
       <h1 className="mb-8 text-3xl font-semibold text-primary">Dashboard</h1>
-      <section className="border w-full h-[80vh] rounded overflow-y-auto">
+      <section className="border w-full rounded overflow-y-auto">
         {isLoading ? (
           <img
             src={LoadingSvg}
@@ -67,16 +67,14 @@ export default function DashboardPage() {
         ) : isError ? (
           <Error />
         ) : (
-          <>
-            <Table
-              data={data}
-              columns={columns || []}
-              isError={isError}
-              isLoading={isLoading}
-              totalEntries={data?.length || 0}
-              showFooter
-            />
-          </>
+          <Table
+            data={data}
+            columns={columns || []}
+            isError={isError}
+            isLoading={isLoading}
+            totalEntries={data?.length || 0}
+            showFooter
+          />
         )}
       </section>
     </PageWrapper>

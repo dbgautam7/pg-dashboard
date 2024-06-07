@@ -1,19 +1,16 @@
 import Select from "react-select";
 import colors from "tailwindcss/colors";
+import { ISelectOptions } from "../../types";
 
-export interface OptionType {
-  value: number;
-  label: string;
-}
 export interface SearchSelectProps {
-  options?: OptionType[];
+  options?: ISelectOptions[];
   placeholder?: string;
   disabled?: boolean;
   loading?: boolean;
-  changeHandler?: (option: OptionType | null) => void;
+  changeHandler?: (option: ISelectOptions | null) => void;
   required?: boolean;
   name?: string;
-  defaultValue?: OptionType;
+  defaultValue?: ISelectOptions | null;
   className?: string;
   clearable?: boolean;
   setOpen?: (open: boolean) => void;
