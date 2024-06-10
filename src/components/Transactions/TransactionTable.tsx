@@ -1,5 +1,5 @@
 import { createColumnHelper } from "@tanstack/react-table";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Table from "../Shared/Table";
 import Search from "../Shared/Search";
 import LoadingSvg from "../../assets/loading.svg";
@@ -9,8 +9,13 @@ import { IPayTransactionList, ISelectOptions } from "../../types";
 import SearchSelect from "../UI/SearchSelect";
 import Error from "../Shared/Error";
 import RadioButton from "../UI/RadioButton";
-import { statusFilterOptions, transactionFilterOptions } from "../../constants";
+import {
+  dateRangeFilterOptions,
+  statusFilterOptions,
+  transactionFilterOptions,
+} from "../../constants";
 import debounce from "../../utils/debounce";
+import { getDateRange } from "../../utils/getDateRange";
 
 const columnHelper = createColumnHelper<IPayTransactionList>();
 
@@ -23,12 +28,20 @@ export default function TransactionTable() {
   const [selectedStatus, setSelectedStatus] = useState<ISelectOptions>(
     statusFilterOptions?.[0]
   );
+  const [selectedDuration, setSelectedDuration] = useState<ISelectOptions>(
+    dateRangeFilterOptions?.[2]
+  );
+
+  const [selectedDateRange, setSelectedDateRange] = useState<any>({});
+
   const { data, isLoading, isError } = usePaymentInTransactionData(
     selectedFilter && selectedFilter?.value.toString(),
     {
       username: searchValue,
       status: selectedStatus.value,
       page: page,
+      startDate: selectedDateRange.startDate,
+      endDate: selectedDateRange.endDate,
     }
   );
 
@@ -36,6 +49,10 @@ export default function TransactionTable() {
     () => debounce((value) => setSearchValue(value), 100, true),
     []
   );
+
+  useMemo(() => {
+    setSelectedDateRange(getDateRange(selectedDuration?.value));
+  }, [selectedDuration]);
 
   const columns = useMemo(
     () => [
@@ -83,14 +100,14 @@ export default function TransactionTable() {
               setSelectedStatus(option);
             }}
           />
-          {/* <SearchSelect
+          <SearchSelect
             className="w-48 text-[15px] shadow"
-            options={statusFilterOptions}
-            defaultValue={selectedStatus}
-            // changeHandler={(option) => {
-            //   setSelectedFilter(option);
-            // }}
-          /> */}
+            options={dateRangeFilterOptions}
+            defaultValue={selectedDuration}
+            changeHandler={(option: any) => {
+              setSelectedDuration(option);
+            }}
+          />
         </section>
         <div className="flex gap-4">
           <Search

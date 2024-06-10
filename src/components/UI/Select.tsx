@@ -65,7 +65,7 @@ const Select = ({
           {options?.map((option) => (
             <SelectRadix.Item
               key={option?.value}
-              value={option?.value}
+              value={option?.value.toString()}
               className="relative flex cursor-pointer select-none items-center gap-2 py-2 pl-8 pr-9 text-sm data-[highlighted]:bg-primary data-[highlighted]:text-whiteText data-[highlighted]:outline-none"
             >
               <SelectRadix.ItemIndicator className="absolute left-2 flex items-center justify-center">

@@ -142,7 +142,7 @@ export default function UserTable() {
           columns={columns || []}
           isError={isError}
           isLoading={isLoading}
-          totalEntries={data}
+          totalEntries={data?.length}
           containsActions
           currentPage={data?.currentPage || 1}
           showFooter

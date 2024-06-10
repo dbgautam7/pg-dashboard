@@ -55,3 +55,9 @@ export interface IRadioButtonProps {
   selectedFilter: ISelectOptions;
   setSelectedFilter: (option: ISelectOptions) => void;
 }
+
+export interface IDateRangeSelectOptions {
+  label: string;
+  startDate: Date;
+  endDate: Date;
+}
