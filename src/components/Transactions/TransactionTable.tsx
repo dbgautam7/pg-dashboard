@@ -1,5 +1,5 @@
 import { createColumnHelper } from "@tanstack/react-table";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import Table from "../Shared/Table";
 import Search from "../Shared/Search";
 import LoadingSvg from "../../assets/loading.svg";
@@ -8,22 +8,34 @@ import { usePaymentInTransactionData } from "../../hooks/useQueryData";
 import { IPayTransactionList, ISelectOptions } from "../../types";
 import SearchSelect from "../UI/SearchSelect";
 import Error from "../Shared/Error";
+import RadioButton from "../UI/RadioButton";
+import { statusFilterOptions, transactionFilterOptions } from "../../constants";
+import debounce from "../../utils/debounce";
 
 const columnHelper = createColumnHelper<IPayTransactionList>();
 
 export default function TransactionTable() {
-  const [selectedFilter, setSelectedFilter] = useState<ISelectOptions | null>({
-    value: "in",
-    label: "Payment In Transaction",
-  });
-  const { data, isLoading, isError, refetch } = usePaymentInTransactionData(
-    selectedFilter?.value
+  const [page, setPage] = useState<number>(1);
+  const [searchValue, setSearchValue] = useState<string>("");
+  const [selectedFilter, setSelectedFilter] = useState<ISelectOptions>(
+    transactionFilterOptions?.[0]
+  );
+  const [selectedStatus, setSelectedStatus] = useState<ISelectOptions>(
+    statusFilterOptions?.[0]
+  );
+  const { data, isLoading, isError } = usePaymentInTransactionData(
+    selectedFilter && selectedFilter?.value.toString(),
+    {
+      username: searchValue,
+      status: selectedStatus.value,
+      page: page,
+    }
   );
 
-  const filterOptions: ISelectOptions[] = [
-    { value: "in", label: "Payment In Transaction" },
-    { value: "out", label: "Payment Out Transaction" },
-  ];
+  const debouncedSearch = useMemo(
+    () => debounce((value) => setSearchValue(value), 100, true),
+    []
+  );
 
   const columns = useMemo(
     () => [
@@ -54,25 +66,38 @@ export default function TransactionTable() {
     []
   );
 
-  useEffect(() => {
-    refetch();
-  }, [selectedFilter?.value]);
-
   return (
-    <section>
+    <section className="space-y-6">
+      <RadioButton
+        filterOptions={transactionFilterOptions}
+        selectedFilter={selectedFilter}
+        setSelectedFilter={setSelectedFilter}
+      />
       <div className="mb-4 flex justify-between">
-        <SearchSelect
-          className="w-72 text-[15px] shadow"
-          options={filterOptions}
-          defaultValue={selectedFilter}
-          changeHandler={(option) => {
-            setSelectedFilter(option);
-          }}
-        />
+        <section className="flex gap-4">
+          <SearchSelect
+            className="w-48 text-[15px] shadow"
+            options={statusFilterOptions}
+            defaultValue={selectedStatus}
+            changeHandler={(option: any) => {
+              setSelectedStatus(option);
+            }}
+          />
+          {/* <SearchSelect
+            className="w-48 text-[15px] shadow"
+            options={statusFilterOptions}
+            defaultValue={selectedStatus}
+            // changeHandler={(option) => {
+            //   setSelectedFilter(option);
+            // }}
+          /> */}
+        </section>
         <div className="flex gap-4">
           <Search
             placeholder="Search Transactions"
-            classname="shadow w-[316px]"
+            className="shadow w-[316px]"
+            searchValue={searchValue}
+            searchHandler={(value) => debouncedSearch(value)}
           />
         </div>
       </div>
@@ -87,13 +112,15 @@ export default function TransactionTable() {
         <Error />
       ) : (
         <Table
-          data={data}
+          currentPage={data.currentPage}
+          data={data?.data}
           columns={columns}
           isError={isError}
           isLoading={isLoading}
-          totalEntries={data?.length}
+          totalEntries={data?.totalPages}
           containsActions
           showFooter
+          pageChangeHandler={(page) => setPage(page)}
         />
       )}
     </section>

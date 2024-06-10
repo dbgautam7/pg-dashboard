@@ -1,14 +1,3 @@
-// import {
-//   ArcElement,
-//   BarElement,
-//   CategoryScale,
-//   Chart,
-//   LinearScale,
-//   LineElement,
-//   PointElement,
-//   Tooltip,
-// } from "chart.js";
-
 import PageWrapper from "../layouts/PageWrapper";
 import { useSystemConfigList } from "../hooks/useQueryData";
 import LoadingSvg from "../assets/loading.svg";
@@ -18,16 +7,6 @@ import { useMemo } from "react";
 import { createColumnHelper } from "@tanstack/react-table";
 import Table from "../components/Shared/Table";
 
-// Chart.register(
-//   CategoryScale,
-//   LinearScale,
-//   LineElement,
-//   PointElement,
-//   BarElement,
-//   ArcElement,
-//   Tooltip
-// );
-
 export default function DashboardPage() {
   const { data, isLoading, isError } = useSystemConfigList();
   const columnHelper = createColumnHelper<ISystemConfigList>();
@@ -36,9 +15,7 @@ export default function DashboardPage() {
       columnHelper.accessor("id", {
         header: "Id",
       }),
-      // columnHelper.accessor("payment_config_id", {
-      //   header: "Payment Config Id",
-      // }),
+
       columnHelper.accessor("name", {
         header: "Name",
       }),
@@ -54,6 +31,7 @@ export default function DashboardPage() {
     ],
     []
   );
+
   return (
     <PageWrapper>
       <h1 className="mb-8 text-3xl font-semibold text-primary">Dashboard</h1>
@@ -72,8 +50,12 @@ export default function DashboardPage() {
             columns={columns || []}
             isError={isError}
             isLoading={isLoading}
-            totalEntries={data?.length || 0}
+            totalEntries={data?.totalPages || 0}
             showFooter
+            currentPage={data?.currentPage || 1}
+            pageChangeHandler={() => {
+              //
+            }}
           />
         )}
       </section>

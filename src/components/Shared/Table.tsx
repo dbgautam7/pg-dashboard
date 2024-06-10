@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import {
   useReactTable,
   flexRender,
@@ -24,11 +23,14 @@ interface Props<T> {
   isError: boolean;
   className?: string;
   totalEntries: number | undefined;
+  clickLinkPrefix?: string;
   allowHover?: boolean;
   showFooter?: boolean;
   containsCheckbox?: boolean;
   containsActions?: boolean;
   pageSize?: number;
+  currentPage: number;
+  pageChangeHandler: (selected: number) => void;
 }
 
 export default function Table<T>({
@@ -42,18 +44,18 @@ export default function Table<T>({
   showFooter = false,
   containsCheckbox = false,
   containsActions = false,
-  pageSize = 7,
+  pageChangeHandler,
+  pageSize = 10,
+  currentPage = 1,
 }: Props<T>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [rowSelection, setRowSelection] = useState({});
-
-  // const navigate = useNavigate();
 
   const table = useReactTable({
     data,
     columns,
     initialState: { pagination: { pageSize } },
-    enableSorting: !isLoading && !isError,
+    enableSorting: !isError,
     state: { sorting, rowSelection },
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
@@ -61,6 +63,7 @@ export default function Table<T>({
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    manualPagination: true,
   });
 
   return (
@@ -71,11 +74,11 @@ export default function Table<T>({
         <table className="w-full">
           <thead className="bg-primarySelect sticky top-0 z-10">
             {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
+              <tr key={headerGroup.id} className="h-[60px]">
                 {headerGroup.headers.map((header) => (
                   <th
                     key={header.id}
-                    className={`group whitespace-nowrap py-4 text-start font-semibold first:pl-4 last:pr-4 ${
+                    className={`group whitespace-nowrap bg-white py-4 text-start text-[15px] font-semibold first:pl-4 last:pr-4 ${
                       header.column.getCanSort()
                         ? "cursor-pointer select-none"
                         : ""
@@ -105,7 +108,7 @@ export default function Table<T>({
               </tr>
             ))}
           </thead>
-          <tbody className="text-[15px]">
+          <tbody className="text-sm">
             {table.getRowModel().rows.map((row) => (
               <tr
                 key={row.id}
@@ -113,10 +116,9 @@ export default function Table<T>({
                   row.getIsSelected()
                     ? "bg-primarySelect"
                     : allowHover
-                    ? "hover:bg-primaryHover"
+                    ? "hover:bg-emerald-50"
                     : ""
                 } ${allowHover ? "cursor-pointer" : "cursor-default"}`}
-                // onClick={() => allowHover && navigate(row.original.id)}
               >
                 {row.getVisibleCells().map((cell) => (
                   <td key={cell.id} className="py-4 first:pl-4">
@@ -143,7 +145,7 @@ export default function Table<T>({
           <Error />
         ) : totalEntries === 0 ? (
           <div className="mt-12 flex flex-col items-center gap-4">
-            <img src={EmptySvg} alt="Empty" className="h-80" />
+            <img src={EmptySvg} alt="Empty" className="h-48" />
             <span className="font-medium">
               Start by adding some data to the table.
             </span>
@@ -152,7 +154,12 @@ export default function Table<T>({
       </ScrollArea>
 
       {!isLoading && !isError && totalEntries && showFooter ? (
-        <TableFooter table={table} totalEntries={totalEntries} />
+        <TableFooter
+          table={table}
+          totalEntries={totalEntries}
+          pageChangeHandler={pageChangeHandler}
+          currentPage={currentPage}
+        />
       ) : null}
     </>
   );

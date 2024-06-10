@@ -22,7 +22,7 @@ export interface IUserData {
 }
 
 export interface ISystemConfigList {
-  id: number;
+  id?: number | string;
   payment_config_id: number;
   name: string;
   parameter: string;
@@ -31,7 +31,7 @@ export interface ISystemConfigList {
 }
 
 export interface IPayTransactionList {
-  id: number;
+  id?: number;
   order_number: string;
   detail_order_number: string;
   gateway: string;
@@ -48,4 +48,10 @@ export interface IPayTransactionList {
 export interface ISelectOptions {
   value: string | number;
   label: string;
+}
+
+export interface IRadioButtonProps {
+  filterOptions: ISelectOptions[];
+  selectedFilter: ISelectOptions;
+  setSelectedFilter: (option: ISelectOptions) => void;
 }

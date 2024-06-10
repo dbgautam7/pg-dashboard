@@ -6,7 +6,7 @@ const pageSize = 10;
 export const useQueryData = (
   key: string[],
   path: string,
-  params = "",
+  params = {},
   enabled = true
 ) => {
   const backendApi = useAxiosPrivate();
@@ -24,29 +24,28 @@ export const useQueryData = (
   });
 };
 
-export const useUsersData = () => useQueryData(["users"], "/user/user-list");
+export const useUsersData = () => useQueryData(["users"], "/user/userList");
 
-export const useUserInfo = () => useQueryData(["user-info"], "/user/user-info");
+export const useUserInfo = () => useQueryData(["user-info"], "/user/userInfo");
 
 export const useSystemConfigList = () =>
-  useQueryData(["system-config-list"], "/ct/system-config-list");
+  useQueryData(["system-config-list"], "/ct/systemConfigList");
 
 export const usePaymentInTransactionData = (
-  filterValue: string | number | undefined
-) =>
-  useQueryData(
-    ["payment-in-transaction"],
+  filterValue: string,
+  params: any
+) => {
+  return useQueryData(
+    ["payment-in-transaction", filterValue, params],
     `/ct/${
       filterValue === "in"
-        ? "list-payment-in-transaction"
-        : "list-payment-out-transaction"
+        ? `list-payment-in-transaction`
+        : `list-payment-out-transaction`
     }`,
-    "",
-    !!filterValue
+    params,
+    !!filterValue || !!params
   );
-
-export const usePaymentOutTransactionData = () =>
-  useQueryData(["payment-out-transaction"], "/ct/list-payment-out-transaction");
+};
 
 export const useToggleUserStatus = (id: number | undefined) =>
   useQueryData(["user-status-update"], `/user/updateStatus?id=${id}`, "", !!id);

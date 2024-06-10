@@ -15,7 +15,6 @@ import Tooltip from "../UI/Tooltip";
 import { useUpdateProfileMutation } from "../../hooks/useMutateData";
 import { SubmitHandler } from "react-hook-form";
 import { useToast } from "../../contexts/ToastContext";
-import SearchSelect from "../UI/SearchSelect";
 
 const columnHelper = createColumnHelper<IUserData>();
 
@@ -133,19 +132,23 @@ export default function UserTable() {
                 { value: "email", label: "Email" },
               ]}
             />
-            <Search placeholder="Search Users" classname="shadow w-[316px]" />
+            <Search placeholder="Search Users" className="shadow w-[316px]" />
           </div>
         </div>
       )}
       {data && (
         <Table
           data={data}
-          columns={columns}
+          columns={columns || []}
           isError={isError}
           isLoading={isLoading}
-          totalEntries={data.count}
+          totalEntries={data}
           containsActions
+          currentPage={data?.currentPage || 1}
           showFooter
+          pageChangeHandler={() => {
+            //
+          }}
         />
       )}
     </section>

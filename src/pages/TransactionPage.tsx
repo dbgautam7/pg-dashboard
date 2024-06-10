@@ -1,5 +1,4 @@
 import TransactionTable from "../components/Transactions/TransactionTable";
-import UserTable from "../components/User/UserTable";
 import PageWrapper from "../layouts/PageWrapper";
 
 export default function TransactionsPage() {
