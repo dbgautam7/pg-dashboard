@@ -2,10 +2,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { useForm } from "react-hook-form";
 import { IUserData } from "../../types";
 import SubHeading from "../Shared/SubHeading";
-
 import InputField from "../UI/InputField";
-import ImageInput from "../UI/ImageInput";
-import { useState } from "react";
 
 interface Props {
   data?: IUserData;

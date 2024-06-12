@@ -10,6 +10,7 @@ import Tooltip from "../UI/Tooltip";
 
 const sideNavItems = [
   { name: "Dashboard", Icon: DashboardSvg, href: "/" },
+  { name: "Permissions", Icon: DashboardSvg, href: "/permissions" },
   { name: "Users", Icon: MembershipsSvg, href: "/users" },
   { name: "Transactions", Icon: MembershipsSvg, href: "/transactions" },
   { name: "Reports", Icon: ReportsSvg, href: "/reports" },

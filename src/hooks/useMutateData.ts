@@ -34,5 +34,8 @@ export const useChangePasswordMutation = () =>
 export const useCreateUserMutation = () =>
   useMutate(["user-profile"], "/user/create");
 
+export const useCreateRolePermissionsMutation = () =>
+  useMutate(["user-role-permissions"], `/user/permissionRoleCreate/`);
+
 export const useUpdateProfileMutation = (id: number | undefined) =>
   useMutate(["user-profile"], `/user/update/${id}`);

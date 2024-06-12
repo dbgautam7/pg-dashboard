@@ -26,6 +26,11 @@ export const useQueryData = (
 
 export const useUsersData = () => useQueryData(["users"], "/user/userList");
 
+export const useUsersPermissionData = () =>
+  useQueryData(["users-permission"], "/user/permissionList");
+
+export const useRolesData = () => useQueryData(["roles"], "/user/roleList");
+
 export const useUserInfo = () => useQueryData(["user-info"], "/user/userInfo");
 
 export const useSystemConfigList = () =>

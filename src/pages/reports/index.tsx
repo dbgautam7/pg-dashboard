@@ -1,19 +1,18 @@
 import { createColumnHelper } from "@tanstack/react-table";
 import { useMemo } from "react";
-
-import Table from "../components/Shared/Table";
-import { TableExportSvg } from "../icons/AllSvgs";
-import PageWrapper from "../layouts/PageWrapper";
+import PageWrapper from "../../layouts/PageWrapper";
+import { TableExportSvg } from "../../icons/AllSvgs";
+import Table from "../../components/Shared/Table";
 
 interface ReportTableType {
-  idx: string;
+  id: string;
   category: string;
 }
 
 const dummyData: ReportTableType[] = [];
 dummyData.push(
-  ...[...Array(134)].map((_, i) => ({
-    idx: `${i + 1}`,
+  ...[...Array(10)].map((_, i) => ({
+    id: `${i + 1}`,
     category: `Category ${i + 1}`,
   }))
 );
@@ -47,6 +46,10 @@ export default function ReportsPage() {
           isLoading={false}
           totalEntries={dummyData.length}
           showFooter
+          currentPage={0}
+          pageChangeHandler={function (selected: number): void {
+            throw new Error("Function not implemented.");
+          }}
         />
       </div>
     </PageWrapper>
