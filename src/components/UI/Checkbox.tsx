@@ -11,7 +11,6 @@ const Checkbox = ({
   handleChange?: () => void;
   checked: boolean;
 }) => {
-  console.log(checked, "checked");
   return (
     <div className="flex gap-2 items-center">
       <input
@@ -22,7 +21,7 @@ const Checkbox = ({
         value={value}
         checked={checked}
       />
-      <label className="leading-none" htmlFor={id?.toString()}>
+      <label className="leading-none font-normal" htmlFor={id?.toString()}>
         {label}
       </label>
     </div>

@@ -6,6 +6,7 @@ import LoadingSvg from "../../assets/loading.svg";
 import Error from "../../components/Shared/Error";
 import { useCreateRolePermissionsMutation } from "../../hooks/useMutateData";
 import { useToast } from "../../contexts/ToastContext";
+import { IPermissions, IRoles } from "../../types";
 
 type CheckedPermissions = {
   [roleId: number]: number[];
@@ -53,7 +54,7 @@ export default function PermissionsPage() {
   };
 
   const handleCheckboxChange = (roleId: number, permissionId: number) => {
-    setCheckedPermissions((prevState: any) => {
+    setCheckedPermissions((prevState: CheckedPermissions) => {
       const rolePermissions = prevState[roleId] || [];
       const newPermissions = rolePermissions?.includes(permissionId)
         ? rolePermissions?.filter((id: number) => id !== permissionId)
@@ -64,7 +65,6 @@ export default function PermissionsPage() {
       };
     });
   };
-  console.log(checkedPermissions, "cje");
   return (
     <PageWrapper>
       <h1 className="mb-8 text-3xl font-semibold text-primary">Permissions</h1>
@@ -78,29 +78,29 @@ export default function PermissionsPage() {
         ) : permissionError || roleError ? (
           <Error />
         ) : (
-          <ol className="">
-            {roles.map((role: any) => {
+          <ol>
+            {roles.map((role: IRoles) => {
               return (
                 <li
                   className="capitalize text-lg font-semibold flex flex-col gap-6"
-                  key={role.id}
+                  key={role?.id}
                 >
                   <section className="flex gap-1">
-                    <p>{role.id}.</p>
-                    <p>{role.name}</p>
+                    <p>{role?.id}.</p>
+                    <p>{role?.name}</p>
                   </section>
                   <section className="ml-6 space-y-8">
-                    {permissions.map((permission: any) => {
+                    {permissions?.map((permission: IPermissions) => {
                       return (
                         <Checkbox
-                          key={permission.id}
+                          key={permission?.id}
                           label={permission?.name}
-                          value={permission?.id || ""}
-                          checked={checkedPermissions?.[role.id]?.includes(
-                            permission.id
+                          value={permission?.id?.toString() || ""}
+                          checked={checkedPermissions?.[role?.id]?.includes(
+                            permission?.id
                           )}
                           handleChange={() =>
-                            handleCheckboxChange(role.id, permission.id)
+                            handleCheckboxChange(role?.id, permission?.id)
                           }
                         />
                       );

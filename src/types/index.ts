@@ -21,6 +21,28 @@ export interface IUserData {
   updated_at?: Date;
 }
 
+export interface IPermissions {
+  id: number;
+  name: string;
+  slug: string;
+  service: string;
+  module: string;
+  access: string;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface IRoles {
+  id: number;
+  name: string;
+  type: string;
+  slug: string;
+  status: string;
+  created_at: Date;
+  updated_at: Date;
+  permissions?: number[];
+}
+
 export interface ISystemConfigList {
   id?: number | string;
   payment_config_id: number;
