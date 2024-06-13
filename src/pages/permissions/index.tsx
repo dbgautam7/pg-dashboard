@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import PageWrapper from "../../layouts/PageWrapper";
 import Checkbox from "../../components/UI/Checkbox";
 import { useRolesData, useUsersPermissionData } from "../../hooks/useQueryData";
@@ -9,15 +9,12 @@ import { useToast } from "../../contexts/ToastContext";
 import { IPermissions, IRoles } from "../../types";
 
 type CheckedPermissions = {
-  [roleId: number]: number[];
+  [roleId: number]: (number | undefined)[];
 };
 
 export default function PermissionsPage() {
   const [checkedPermissions, setCheckedPermissions] =
-    useState<CheckedPermissions>({
-      1: [1, 2],
-      2: [],
-    });
+    useState<CheckedPermissions>({});
 
   const {
     data: permissions,
@@ -34,6 +31,17 @@ export default function PermissionsPage() {
   const assignRolePermissionMutation = useCreateRolePermissionsMutation();
 
   const { updateToast } = useToast();
+
+  useEffect(() => {
+    if (!roleLoading && !roleError && roles) {
+      const defaultPermissions: CheckedPermissions = {};
+      roles?.forEach((role: IRoles) => {
+        defaultPermissions[role?.role_id] =
+          role?.permissions?.map((item) => item?.permission_id) || [];
+      });
+      setCheckedPermissions(defaultPermissions);
+    }
+  }, [roleLoading, roleError, roles]);
 
   const handleAssignRolePermissions = async (roleId: number) => {
     const rolePermissions = checkedPermissions?.[roleId]?.sort();
@@ -57,7 +65,9 @@ export default function PermissionsPage() {
     setCheckedPermissions((prevState: CheckedPermissions) => {
       const rolePermissions = prevState[roleId] || [];
       const newPermissions = rolePermissions?.includes(permissionId)
-        ? rolePermissions?.filter((id: number) => id !== permissionId)
+        ? rolePermissions?.filter(
+            (id: number | undefined) => id !== permissionId
+          )
         : [...rolePermissions, permissionId];
       return {
         ...prevState,
@@ -79,15 +89,15 @@ export default function PermissionsPage() {
           <Error />
         ) : (
           <ol>
-            {roles.map((role: IRoles) => {
+            {roles?.map((role: IRoles) => {
               return (
                 <li
                   className="capitalize text-lg font-semibold flex flex-col gap-6"
-                  key={role?.id}
+                  key={role?.role_id}
                 >
                   <section className="flex gap-1">
-                    <p>{role?.id}.</p>
-                    <p>{role?.name}</p>
+                    <p>{role?.role_id}.</p>
+                    <p>{role?.role_name}</p>
                   </section>
                   <section className="ml-6 space-y-8">
                     {permissions?.map((permission: IPermissions) => {
@@ -96,11 +106,13 @@ export default function PermissionsPage() {
                           key={permission?.id}
                           label={permission?.name}
                           value={permission?.id?.toString() || ""}
-                          checked={checkedPermissions?.[role?.id]?.includes(
-                            permission?.id
-                          )}
+                          checked={
+                            !!checkedPermissions?.[role?.role_id]?.includes(
+                              permission?.id
+                            )
+                          }
                           handleChange={() =>
-                            handleCheckboxChange(role?.id, permission?.id)
+                            handleCheckboxChange(role?.role_id, permission?.id)
                           }
                         />
                       );
@@ -108,14 +120,14 @@ export default function PermissionsPage() {
                   </section>
                   <button
                     onClick={() => {
-                      handleAssignRolePermissions(role.id);
+                      handleAssignRolePermissions(role.role_id);
                     }}
                     type="submit"
                     className="btn-primary px-6 py-2 mb-4 place-self-start"
                   >
                     {role?.permissions?.length
-                      ? "Update Permission"
-                      : "Assign Permission"}
+                      ? `Update ${role?.role_name} Permission`
+                      : `Assign  ${role?.role_name} Permission`}
                   </button>
                 </li>
               );

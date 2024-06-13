@@ -1,5 +1,5 @@
 import { createColumnHelper } from "@tanstack/react-table";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import Table from "../Shared/Table";
 import Search from "../Shared/Search";
 import LoadingSvg from "../../assets/loading.svg";

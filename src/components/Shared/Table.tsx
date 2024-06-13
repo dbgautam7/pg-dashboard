@@ -45,7 +45,7 @@ export default function Table<T>({
   containsCheckbox = false,
   containsActions = false,
   pageChangeHandler,
-  pageSize = 10,
+  pageSize = 2,
   currentPage = 1,
 }: Props<T>) {
   const [sorting, setSorting] = useState<SortingState>([]);

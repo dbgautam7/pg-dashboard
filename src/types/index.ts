@@ -33,14 +33,12 @@ export interface IPermissions {
 }
 
 export interface IRoles {
-  id: number;
-  name: string;
-  type: string;
-  slug: string;
-  status: string;
-  created_at: Date;
-  updated_at: Date;
-  permissions?: number[];
+  role_id: number;
+  role_name: string;
+  permissions: {
+    permission_id?: number;
+    permission_name?: string;
+  }[];
 }
 
 export interface ISystemConfigList {

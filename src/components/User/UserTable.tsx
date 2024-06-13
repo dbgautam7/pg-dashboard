@@ -15,12 +15,24 @@ import Tooltip from "../UI/Tooltip";
 import { useUpdateProfileMutation } from "../../hooks/useMutateData";
 import { SubmitHandler } from "react-hook-form";
 import { useToast } from "../../contexts/ToastContext";
+import debounce from "../../utils/debounce";
 
 const columnHelper = createColumnHelper<IUserData>();
 
 export default function UserTable() {
+  const [page, setPage] = useState<number>(1);
+  const [searchValue, setSearchValue] = useState<string>("");
   const [selectedId, setSelectedId] = useState<number>();
-  const { data, isLoading, isError, refetch } = useUsersData();
+  const { data, isLoading, isError, refetch } = useUsersData({
+    page,
+    username: searchValue,
+  });
+
+  const debouncedSearch = useMemo(
+    () => debounce((value) => setSearchValue(value), 100, true),
+    []
+  );
+
   const { updateToast } = useToast();
   useToggleUserStatus(selectedId);
 
@@ -115,6 +127,23 @@ export default function UserTable() {
 
   return (
     <section>
+      <div className="mb-4 flex justify-between">
+        <div className="flex gap-4 flex-row-reverse justify-between w-full">
+          {/* <TableFilters
+            sortOptions={[
+              { value: "name", label: "Name" },
+              { value: "email", label: "Email" },
+            ]}
+          /> */}
+
+          <Search
+            placeholder="Search Users"
+            className="shadow w-[316px]"
+            searchValue={searchValue}
+            searchHandler={(value) => debouncedSearch(value)}
+          />
+        </div>
+      </div>
       {isLoading ? (
         <img
           src={LoadingSvg}
@@ -124,31 +153,16 @@ export default function UserTable() {
       ) : isError ? (
         <Error />
       ) : (
-        <div className="mb-4 flex justify-between">
-          <div className="flex gap-4">
-            <TableFilters
-              sortOptions={[
-                { value: "name", label: "Name" },
-                { value: "email", label: "Email" },
-              ]}
-            />
-            <Search placeholder="Search Users" className="shadow w-[316px]" />
-          </div>
-        </div>
-      )}
-      {data && (
         <Table
-          data={data}
+          data={data?.data}
           columns={columns || []}
           isError={isError}
           isLoading={isLoading}
-          totalEntries={data?.length}
+          totalEntries={data?.totalPages}
           containsActions
           currentPage={data?.currentPage || 1}
           showFooter
-          pageChangeHandler={() => {
-            //
-          }}
+          pageChangeHandler={(page) => setPage(page)}
         />
       )}
     </section>

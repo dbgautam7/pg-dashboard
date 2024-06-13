@@ -10,20 +10,12 @@ interface Props<T extends object> {
 }
 
 export default function TableFooter<T extends object>({
-  table,
   totalEntries,
   pageChangeHandler,
   currentPage,
 }: Props<T>) {
-  const pageSize = table.getState().pagination.pageSize;
-
   return (
-    <div className="flex flex-wrap items-center justify-between pt-4 text-[15px] font-medium">
-      <span className="text-grayText">
-        Showing {(currentPage - 1) * pageSize + 1} to{" "}
-        {Math.min(pageSize * (currentPage - 1 + 1), totalEntries)} of{" "}
-        {totalEntries} Entries
-      </span>
+    <div className="flex flex-wrap items-center justify-center pt-4 text-[15px] font-medium">
       <Pagination
         totalPageCount={totalEntries}
         pageChangeHandler={pageChangeHandler}

@@ -24,7 +24,8 @@ export const useQueryData = (
   });
 };
 
-export const useUsersData = () => useQueryData(["users"], "/user/userList");
+export const useUsersData = (params: any) =>
+  useQueryData(["users"], "/user/userList", params, !!params);
 
 export const useUsersPermissionData = () =>
   useQueryData(["users-permission"], "/user/permissionList");
