@@ -10,7 +10,7 @@ const initialState: IAuthDetails = {
 const AuthContext = createContext({
   auth: initialState,
   setAuth: (_auth: IAuthDetails) => {
-    console.log(_auth, "_auth");
+    //
   },
 });
 

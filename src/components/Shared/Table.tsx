@@ -30,7 +30,7 @@ interface Props<T> {
   containsActions?: boolean;
   pageSize?: number;
   currentPage: number;
-  pageChangeHandler: (selected: number) => void;
+  pageChangeHandler?: (selected: number) => void;
 }
 
 export default function Table<T>({
@@ -157,7 +157,7 @@ export default function Table<T>({
         <TableFooter
           table={table}
           totalEntries={totalEntries}
-          pageChangeHandler={pageChangeHandler}
+          pageChangeHandler={pageChangeHandler!}
           currentPage={currentPage}
         />
       ) : null}

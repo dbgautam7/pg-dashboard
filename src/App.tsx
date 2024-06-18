@@ -9,9 +9,11 @@ import UsersPage from "./pages/UsersPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import AuthGuard from "./utils/authGuard";
 import SettingsPage from "./pages/settings";
-import TransactionsPage from "./pages/TransactionPage";
 import ReportsPage from "./pages/reports";
-import PermissionsPage from "./pages/permissions";
+import DepositPage from "./pages/deposit";
+import WithdrawPage from "./pages/withdraw";
+import ConfigPage from "./pages/config";
+import RolesPermissionsPage from "./pages/rolesPermissions";
 
 export default function App() {
   return (
@@ -23,8 +25,10 @@ export default function App() {
         <Route element={<BaseLayout />}>
           <Route index element={<DashboardPage />} />
           <Route path="users" element={<UsersPage />} />
-          <Route path="permissions" element={<PermissionsPage />} />
-          <Route path="transactions" element={<TransactionsPage />} />
+          <Route path="roles" element={<RolesPermissionsPage />} />
+          <Route path="config" element={<ConfigPage />} />
+          <Route path="deposit" element={<DepositPage />} />
+          <Route path="withdraw" element={<WithdrawPage />} />
           <Route path="reports" element={<ReportsPage />} />
           <Route path="settings" element={<SettingsPage />} />
         </Route>

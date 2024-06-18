@@ -33,7 +33,7 @@ export default function UserFormModal({
         <Dialog.Portal>
           <Dialog.Overlay className="overlay" />
           <Dialog.Content className="modal-content px-8 py-6">
-            <form className="space-y-8">
+            <aside className="space-y-8">
               <Dialog.Title>
                 <SubHeading title={isEdit ? "Update User" : "Create User"} />
               </Dialog.Title>
@@ -74,7 +74,7 @@ export default function UserFormModal({
                   Cancel
                 </Dialog.Close>
               </div>
-            </form>
+            </aside>
           </Dialog.Content>
         </Dialog.Portal>
       </Dialog.Root>

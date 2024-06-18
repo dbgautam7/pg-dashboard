@@ -37,12 +37,12 @@ export const useUserInfo = () => useQueryData(["user-info"], "/user/userInfo");
 export const useSystemConfigList = () =>
   useQueryData(["system-config-list"], "/ct/systemConfigList");
 
-export const usePaymentInTransactionData = (
-  filterValue: string,
+export const useTransactionData = (
+  filterValue: string | undefined,
   params: any
 ) => {
   return useQueryData(
-    ["payment-in-transaction", filterValue, params],
+    ["transaction", filterValue, params],
     `/ct/${
       filterValue === "in"
         ? `list-payment-in-transaction`

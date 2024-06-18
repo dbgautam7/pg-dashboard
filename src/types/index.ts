@@ -41,6 +41,10 @@ export interface IRoles {
   }[];
 }
 
+export type TypeCheckedPermissions = {
+  [roleId: number]: (number | undefined)[];
+};
+
 export interface ISystemConfigList {
   id?: number | string;
   payment_config_id: number;

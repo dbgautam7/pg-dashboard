@@ -3,16 +3,22 @@ import { NavLink, useLocation } from "react-router-dom";
 import {
   DashboardSvg,
   SettingsSvg,
-  MembershipsSvg,
   ReportsSvg,
+  DepositSvg,
+  WithdrawSvg,
+  SystemConfigSvg,
+  UsersSvg,
+  RolePermissionSvg,
 } from "../../icons/AllSvgs";
 import Tooltip from "../UI/Tooltip";
 
 const sideNavItems = [
   { name: "Dashboard", Icon: DashboardSvg, href: "/" },
-  { name: "Permissions", Icon: DashboardSvg, href: "/permissions" },
-  { name: "Users", Icon: MembershipsSvg, href: "/users" },
-  { name: "Transactions", Icon: MembershipsSvg, href: "/transactions" },
+  { name: "Configuration", Icon: SystemConfigSvg, href: "/config" },
+  { name: "Roles", Icon: RolePermissionSvg, href: "/roles" },
+  { name: "Users", Icon: UsersSvg, href: "/users" },
+  { name: "Deposit", Icon: DepositSvg, href: "/deposit" },
+  { name: "Withdraw", Icon: WithdrawSvg, href: "/withdraw" },
   { name: "Reports", Icon: ReportsSvg, href: "/reports" },
   { name: "Settings", Icon: SettingsSvg, href: "/settings" },
 ];

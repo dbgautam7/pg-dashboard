@@ -38,4 +38,4 @@ export const useCreateRolePermissionsMutation = () =>
   useMutate(["user-role-permissions"], `/user/permissionRoleCreate/`);
 
 export const useUpdateProfileMutation = (id: number | undefined) =>
-  useMutate(["user-profile"], `/user/update/${id}`);
+  useMutate(["user-profile"], `/user/updateProfile/${id}`);

@@ -4,55 +4,57 @@ import Table from "../Shared/Table";
 import Search from "../Shared/Search";
 import LoadingSvg from "../../assets/loading.svg";
 
-import { usePaymentInTransactionData } from "../../hooks/useQueryData";
 import { IPayTransactionList, ISelectOptions } from "../../types";
 import SearchSelect from "../UI/SearchSelect";
 import Error from "../Shared/Error";
-import RadioButton from "../UI/RadioButton";
-import {
-  dateRangeFilterOptions,
-  statusFilterOptions,
-  transactionFilterOptions,
-} from "../../constants";
+import { dateRangeFilterOptions, statusFilterOptions } from "../../constants";
 import debounce from "../../utils/debounce";
 import { getDateRange } from "../../utils/getDateRange";
+import { useTransactionData } from "../../hooks/useQueryData";
+
+interface IDateRange {
+  startDate: Date;
+  endDate: Date;
+}
 
 const columnHelper = createColumnHelper<IPayTransactionList>();
 
-export default function TransactionTable() {
+export default function TransactionTable({ queryKey }: { queryKey?: string }) {
   const [page, setPage] = useState<number>(1);
   const [searchValue, setSearchValue] = useState<string>("");
-  const [selectedFilter, setSelectedFilter] = useState<ISelectOptions>(
-    transactionFilterOptions?.[0]
-  );
+
   const [selectedStatus, setSelectedStatus] = useState<ISelectOptions>(
     statusFilterOptions?.[0]
   );
   const [selectedDuration, setSelectedDuration] = useState<ISelectOptions>(
-    dateRangeFilterOptions?.[2]
+    dateRangeFilterOptions?.[0]
   );
 
-  const [selectedDateRange, setSelectedDateRange] = useState<any>({});
-
-  const { data, isLoading, isError } = usePaymentInTransactionData(
-    selectedFilter && selectedFilter?.value.toString(),
-    {
-      username: searchValue,
-      status: selectedStatus.value,
-      page: page,
-      startDate: selectedDateRange.startDate,
-      endDate: selectedDateRange.endDate,
-    }
-  );
-
-  const debouncedSearch = useMemo(
-    () => debounce((value) => setSearchValue(value), 100, true),
-    []
+  const [selectedDateRange, setSelectedDateRange] = useState<IDateRange>(
+    getDateRange(selectedDuration?.value)
   );
 
   useMemo(() => {
     setSelectedDateRange(getDateRange(selectedDuration?.value));
   }, [selectedDuration]);
+
+  const params = useMemo(
+    () => ({
+      username: searchValue,
+      status: selectedStatus.value,
+      page: page,
+      startDate: selectedDateRange.startDate,
+      endDate: selectedDateRange.endDate,
+    }),
+    [searchValue, selectedStatus, page, selectedDateRange]
+  );
+
+  const { data, isLoading, isError } = useTransactionData(queryKey, params);
+
+  const debouncedSearch = useMemo(
+    () => debounce((value) => setSearchValue(value), 100, true),
+    []
+  );
 
   const columns = useMemo(
     () => [
@@ -85,11 +87,6 @@ export default function TransactionTable() {
 
   return (
     <section className="space-y-6">
-      <RadioButton
-        filterOptions={transactionFilterOptions}
-        selectedFilter={selectedFilter}
-        setSelectedFilter={setSelectedFilter}
-      />
       <div className="mb-4 flex justify-between">
         <section className="flex gap-4">
           <SearchSelect
