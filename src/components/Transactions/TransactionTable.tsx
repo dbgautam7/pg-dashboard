@@ -56,6 +56,8 @@ export default function TransactionTable({ queryKey }: { queryKey?: string }) {
     []
   );
 
+  const isWithdraw = true;
+
   const columns = useMemo(
     () => [
       columnHelper.accessor("id", {
@@ -80,6 +82,35 @@ export default function TransactionTable({ queryKey }: { queryKey?: string }) {
 
       columnHelper.accessor("status", {
         header: "Status",
+        id: "status",
+        cell: ({ row }) => {
+          let color: string;
+          const originalData: string = row.original.status;
+          if (originalData === "initiate") {
+            color = "text-gray-500";
+          } else if (originalData === "success") {
+            color = "text-green-500";
+          } else if (originalData === "pending") {
+            color = "text-yellow-500";
+          } else {
+            color = "text-red-500";
+          }
+          return <p className={`capitalize ${color}`}>{row.original.status}</p>;
+        },
+      }),
+
+      columnHelper.display({
+        header: "Action",
+        id: "actions",
+        enableHiding: isWithdraw,
+        cell: (tableProps) => {
+          const original = tableProps.row.original;
+          // Display action only if status is "pending"
+          if (isWithdraw) {
+            return <button className="">Take Action</button>;
+          }
+          return null; // or return an empty element like <div />
+        },
       }),
     ],
     []
@@ -132,7 +163,7 @@ export default function TransactionTable({ queryKey }: { queryKey?: string }) {
           isError={isError}
           isLoading={isLoading}
           totalEntries={data?.totalPages}
-          containsActions
+          containsActions={queryKey === "withdraw" ? true : false}
           showFooter
           pageChangeHandler={(page) => setPage(page)}
         />

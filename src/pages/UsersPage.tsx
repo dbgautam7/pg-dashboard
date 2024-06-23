@@ -14,6 +14,7 @@ export default function UsersPage() {
 
   const createUserMutation = useCreateUserMutation();
   const handleCreateUser: SubmitHandler<IUserData> = async (data) => {
+    console.log(data, "Data");
     await createUserMutation.mutateAsync(["post", "", data], {
       onSuccess: (res) => {
         setIsModalOpen(false);

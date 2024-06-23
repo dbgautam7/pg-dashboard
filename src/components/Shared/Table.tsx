@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   useReactTable,
   flexRender,
@@ -7,6 +7,7 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   ColumnDef,
+  VisibilityState,
 } from "@tanstack/react-table";
 
 import Error from "../Shared/Error";
@@ -65,6 +66,12 @@ export default function Table<T>({
     getSortedRowModel: getSortedRowModel(),
     manualPagination: true,
   });
+
+  useEffect(() => {
+    table.setColumnVisibility({
+      actions: !!containsActions,
+    });
+  }, [table]);
 
   return (
     <>

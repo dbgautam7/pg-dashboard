@@ -53,7 +53,7 @@ export default function ConfigPage() {
             isError={isError}
             isLoading={isLoading}
             totalEntries={data?.length || 0}
-            showFooter
+            // showFooter
             currentPage={data?.currentPage || 1}
             pageChangeHandler={() => {
               //

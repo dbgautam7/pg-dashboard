@@ -9,7 +9,7 @@ export default function DepositPage() {
           <h1 className="text-3xl font-semibold text-primary">Deposit</h1>
           <div className="flex gap-8"></div>
         </section>
-        <TransactionTable queryKey="withdraw" />
+        <TransactionTable queryKey="deposit" />
       </div>
     </PageWrapper>
   );

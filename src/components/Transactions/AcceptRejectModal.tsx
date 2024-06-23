@@ -15,7 +15,7 @@ interface Props {
   setIsModalOpen?: (d: boolean) => void;
 }
 
-export default function UserFormModal({
+export default function TransactionAcceptRejectModal({
   data,
   children,
   triggerClassName = "",
@@ -25,7 +25,11 @@ export default function UserFormModal({
   isModalOpen,
   setIsModalOpen,
 }: Props) {
-  const { register, handleSubmit } = useForm<IUserData>();
+  const { register, handleSubmit } = useForm<{ remarks: string }>();
+
+  const handleAcceptReject = () => {
+    //
+  };
   return (
     <Dialog.Root open={isModalOpen} onOpenChange={setIsModalOpen}>
       <Dialog.Trigger className={triggerClassName}>{children}</Dialog.Trigger>
@@ -33,44 +37,26 @@ export default function UserFormModal({
         <Dialog.Overlay className="overlay" />
         <Dialog.Content className="modal-content px-8 py-6">
           <form
-            onSubmit={handleSubmit(!isEdit ? handleCreate! : handleUpdate!)}
+            onSubmit={handleSubmit(handleAcceptReject)}
             className="space-y-8"
           >
             <Dialog.Title>
-              <SubHeading title={isEdit ? "Update User" : "Create User"} />
+              <SubHeading title={isEdit ? "Accept" : "Reject"} />
             </Dialog.Title>
             <section className="flex-grow space-y-6">
               <div className="flex gap-6">
                 <InputField
-                  {...register("name")}
+                  {...register("remarks")}
                   label="Full Name"
                   name="name"
                   placeholder="Full Name"
                   defaultValue={data?.name}
                 />
               </div>
-              <div className="flex gap-6">
-                <InputField
-                  {...register("email")}
-                  label="Email"
-                  name="email"
-                  type="email"
-                  placeholder="Email Address"
-                  defaultValue={data?.email}
-                />
-                <InputField
-                  {...register("phone")}
-                  label="Phone Number"
-                  name="phone"
-                  type="number"
-                  placeholder="Phone Number"
-                  defaultValue={data?.phone}
-                />
-              </div>
             </section>
             <div className="flex justify-end gap-8">
               <button type="submit" className="btn-primary px-6">
-                {isEdit ? "Update User" : "Create User"}
+                {isEdit ? "Accept" : "Reject"}
               </button>
               <Dialog.Close className="btn-danger px-6 py-2">
                 Cancel

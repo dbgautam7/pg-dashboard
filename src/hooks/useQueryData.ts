@@ -44,7 +44,7 @@ export const useTransactionData = (
   return useQueryData(
     ["transaction", filterValue, params],
     `/ct/${
-      filterValue === "in"
+      filterValue === "deposit"
         ? `list-payment-in-transaction`
         : `list-payment-out-transaction`
     }`,
