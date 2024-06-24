@@ -5,7 +5,8 @@ import { cookieAuthKey } from "../utils/constants";
 
 const initialState: IAuthDetails = {
   token: "",
-  user: {},
+  userInfo: {},
+  permissions: [],
 };
 const AuthContext = createContext({
   auth: initialState,
@@ -20,6 +21,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const currentAuthState = authDetails ? authDetails : initialState;
   const [auth, setAuth] = useState<IAuthDetails>(currentAuthState);
 
+  console.log(auth, "auth");
   return (
     <AuthContext.Provider value={{ auth, setAuth }}>
       {children}

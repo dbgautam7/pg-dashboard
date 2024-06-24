@@ -31,11 +31,13 @@ export const useMutate = (
 export const useChangePasswordMutation = () =>
   useMutate(["change-password"], "/user/changePassword");
 
-export const useCreateUserMutation = () =>
-  useMutate(["user-profile"], "/user/create");
+export const useCreateUserMutation = () => useMutate(["users"], "/user/create");
 
 export const useCreateRolePermissionsMutation = () =>
   useMutate(["user-role-permissions"], `/user/permissionRoleCreate/`);
 
-export const useUpdateProfileMutation = (id: number | undefined) =>
-  useMutate(["user-profile"], `/user/updateProfile/${id}`);
+export const useUpdateProfileMutation = () =>
+  useMutate(["user-profile"], `/user/updateProfile/`);
+
+export const useAcceptRejectTransactionMutation = () =>
+  useMutate(["transactions"], `/ct/process-payout/`);

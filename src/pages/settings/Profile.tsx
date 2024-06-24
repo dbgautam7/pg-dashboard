@@ -10,12 +10,12 @@ import { IUserData } from "../../types";
 
 const Profile = () => {
   const { data, isLoading, isError, refetch } = useUserInfo();
-  const updateProfileMutation = useUpdateProfileMutation(data?.id);
+  const updateProfileMutation = useUpdateProfileMutation();
   const { updateToast } = useToast();
   const { register, handleSubmit } = useForm<IUserData>();
 
   const onSubmitHandler: SubmitHandler<IUserData> = async (data) => {
-    await updateProfileMutation.mutateAsync(["put", "", data], {
+    await updateProfileMutation.mutateAsync(["put", data?.id, data], {
       onSuccess: (res) => {
         refetch();
         updateToast(res?.message, "success");

@@ -42,7 +42,7 @@ export const useTransactionData = (
   params: any
 ) => {
   return useQueryData(
-    ["transaction", filterValue, params],
+    ["transactions", filterValue, params],
     `/ct/${
       filterValue === "deposit"
         ? `list-payment-in-transaction`
@@ -55,3 +55,6 @@ export const useTransactionData = (
 
 export const useToggleUserStatus = (id: number | undefined) =>
   useQueryData(["user-status-update"], `/user/updateStatus?id=${id}`, "", !!id);
+
+export const useExportToExcel = () =>
+  useQueryData(["export-to-excel"], "/ct/exportToExcel");

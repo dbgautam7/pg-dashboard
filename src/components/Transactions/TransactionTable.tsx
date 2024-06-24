@@ -11,10 +11,20 @@ import { dateRangeFilterOptions, statusFilterOptions } from "../../constants";
 import debounce from "../../utils/debounce";
 import { getDateRange } from "../../utils/getDateRange";
 import { useTransactionData } from "../../hooks/useQueryData";
+import { CrossCircleSvg, CrossTickSvg } from "../../icons/AllSvgs";
+import TransactionAcceptRejectModal from "./AcceptRejectModal";
+import { useAcceptRejectTransactionMutation } from "../../hooks/useMutateData";
+import { SubmitHandler } from "react-hook-form";
+import { useToast } from "../../contexts/ToastContext";
 
 interface IDateRange {
   startDate: Date;
   endDate: Date;
+}
+
+interface IFormData {
+  remarks: string;
+  status?: string;
 }
 
 const columnHelper = createColumnHelper<IPayTransactionList>();
@@ -22,6 +32,9 @@ const columnHelper = createColumnHelper<IPayTransactionList>();
 export default function TransactionTable({ queryKey }: { queryKey?: string }) {
   const [page, setPage] = useState<number>(1);
   const [searchValue, setSearchValue] = useState<string>("");
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [actionType, setActionType] = useState<string>("");
+  const [selectedId, setSelectedId] = useState<number>();
 
   const [selectedStatus, setSelectedStatus] = useState<ISelectOptions>(
     statusFilterOptions?.[0]
@@ -48,15 +61,19 @@ export default function TransactionTable({ queryKey }: { queryKey?: string }) {
     }),
     [searchValue, selectedStatus, page, selectedDateRange]
   );
+  const acceptRejectTransactionMutatin = useAcceptRejectTransactionMutation();
 
-  const { data, isLoading, isError } = useTransactionData(queryKey, params);
+  const { data, isLoading, isError, refetch } = useTransactionData(
+    queryKey,
+    params
+  );
+
+  const { updateToast } = useToast();
 
   const debouncedSearch = useMemo(
     () => debounce((value) => setSearchValue(value), 100, true),
     []
   );
-
-  const isWithdraw = true;
 
   const columns = useMemo(
     () => [
@@ -84,37 +101,68 @@ export default function TransactionTable({ queryKey }: { queryKey?: string }) {
         header: "Status",
         id: "status",
         cell: ({ row }) => {
-          let color: string;
+          let style: string;
           const originalData: string = row.original.status;
           if (originalData === "initiate") {
-            color = "text-gray-500";
+            style = "bg-gray-400";
           } else if (originalData === "success") {
-            color = "text-green-500";
+            style = "bg-green-400";
           } else if (originalData === "pending") {
-            color = "text-yellow-500";
+            style = "bg-yellow-400";
           } else {
-            color = "text-red-500";
+            style = "bg-red-400";
           }
-          return <p className={`capitalize ${color}`}>{row.original.status}</p>;
-        },
-      }),
-
-      columnHelper.display({
-        header: "Action",
-        id: "actions",
-        enableHiding: isWithdraw,
-        cell: (tableProps) => {
-          const original = tableProps.row.original;
-          // Display action only if status is "pending"
-          if (isWithdraw) {
-            return <button className="">Take Action</button>;
-          }
-          return null; // or return an empty element like <div />
+          return (
+            <section className="flex items-center gap-1">
+              <p className={`capitalize px-2 ${style}`}>
+                {row.original.status}
+              </p>
+              {originalData === "initiate" && queryKey === "withdraw" && (
+                <div className="flex gap-1">
+                  <button
+                    onClick={() => {
+                      setIsModalOpen(true);
+                      setActionType("reject");
+                      setSelectedId(row.original.id);
+                    }}
+                  >
+                    <CrossCircleSvg className="h-5 w-5 text-red-400" />
+                  </button>
+                  <button
+                    onClick={() => {
+                      setIsModalOpen(true);
+                      setActionType("success");
+                      setSelectedId(row.original.id);
+                    }}
+                  >
+                    <CrossTickSvg className="h-5 w-5 text-green-400" />
+                  </button>
+                </div>
+              )}
+            </section>
+          );
         },
       }),
     ],
     []
   );
+
+  const handleAcceptRejectTransaction: SubmitHandler<IFormData> = (data) => {
+    data.status = actionType;
+    acceptRejectTransactionMutatin.mutateAsync(["post", selectedId, data], {
+      onSuccess: () => {
+        updateToast("Transaction Accepted Successfully", "success");
+        setIsModalOpen(false);
+        refetch();
+      },
+      onError: (error: any) => {
+        const errorMessage = error?.response?.data?.error
+          ? error?.response?.data?.error
+          : error.message;
+        updateToast(errorMessage, "error");
+      },
+    });
+  };
 
   return (
     <section className="space-y-6">
@@ -168,6 +216,12 @@ export default function TransactionTable({ queryKey }: { queryKey?: string }) {
           pageChangeHandler={(page) => setPage(page)}
         />
       )}
+      <TransactionAcceptRejectModal
+        isModalOpen={isModalOpen}
+        setIsModalOpen={setIsModalOpen}
+        action={actionType}
+        handleAcceptOrReject={handleAcceptRejectTransaction}
+      />
     </section>
   );
 }

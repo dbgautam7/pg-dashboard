@@ -30,10 +30,15 @@ export default function LogInForm() {
       );
       const resData = response?.data;
       if (resData) {
-        setAuth({ token: resData.token });
+        setAuth({
+          token: resData?.token,
+          userInfo: resData?.userInfo,
+          permissions: resData?.permissions,
+        });
         setAuthDetails({
-          token: resData.token,
-          user: {},
+          token: resData?.token,
+          userInfo: resData?.userInfo,
+          permissions: resData?.permissions,
         });
 
         updateToast(resData.message, "success");

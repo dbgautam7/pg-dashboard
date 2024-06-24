@@ -58,7 +58,8 @@ export default function SideNav() {
         clickHandler={() => {
           setAuth({
             token: "",
-            user: "",
+            userInfo: {},
+            permissions: null,
           });
           removeAuthDetails();
           updateToast("Logged Out Successfully", "success");

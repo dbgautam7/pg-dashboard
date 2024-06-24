@@ -1,27 +1,17 @@
 import { NavLink, useLocation } from "react-router-dom";
-
-import {
-  DashboardSvg,
-  SettingsSvg,
-  ReportsSvg,
-  DepositSvg,
-  WithdrawSvg,
-  SystemConfigSvg,
-  UsersSvg,
-  RolePermissionSvg,
-} from "../../icons/AllSvgs";
 import Tooltip from "../UI/Tooltip";
+import { dynamicSidebarLinks } from "../../utils/dynamicNavLink";
 
-const sideNavItems = [
-  { name: "Dashboard", Icon: DashboardSvg, href: "/" },
-  { name: "Configuration", Icon: SystemConfigSvg, href: "/config" },
-  { name: "Roles", Icon: RolePermissionSvg, href: "/roles" },
-  { name: "Users", Icon: UsersSvg, href: "/users" },
-  { name: "Deposit", Icon: DepositSvg, href: "/deposit" },
-  { name: "Withdraw", Icon: WithdrawSvg, href: "/withdraw" },
-  { name: "Reports", Icon: ReportsSvg, href: "/reports" },
-  { name: "Settings", Icon: SettingsSvg, href: "/settings" },
-];
+// const sideNavItems = [
+//   { name: "Dashboard", Icon: DashboardSvg, href: "/" },
+// { name: "Configuration", Icon: SystemConfigSvg, href: "/config" },
+//   { name: "Roles", Icon: RolePermissionSvg, href: "/roles" },
+//   { name: "Users", Icon: UsersSvg, href: "/users" },
+//   { name: "Deposit", Icon: DepositSvg, href: "/deposit" },
+//   { name: "Withdraw", Icon: WithdrawSvg, href: "/withdraw" },
+//   { name: "Reports", Icon: ReportsSvg, href: "/reports" },
+//   { name: "Settings", Icon: SettingsSvg, href: "/settings" },
+// ];
 
 interface Props {
   isExpanded: boolean;
@@ -29,6 +19,7 @@ interface Props {
 
 export default function SideNavLinks({ isExpanded }: Props) {
   const { pathname } = useLocation();
+  const sideNavItems = dynamicSidebarLinks();
   const activeIndex = sideNavItems.findIndex(
     ({ href }) => href === "/" + pathname.split("/")[1]
   );

@@ -11,6 +11,10 @@
     @apply rounded border border-secondary bg-white font-medium text-secondary shadow transition-colors duration-200 hover:bg-secondary hover:text-whiteText;
   }
 
+  .btn-disable {
+    @apply rounded border border-gray-400 bg-gray-400 font-medium text-whiteText shadow transition-colors duration-200;
+  }
+
   .btn-danger {
     @apply rounded border border-danger font-medium text-danger shadow transition-colors duration-200 hover:bg-danger hover:text-whiteText;
   }
@@ -51,20 +55,20 @@ input::-ms-reveal {
   display: none;
 }
 
-#ToastRoot[data-state='open'] {
+#ToastRoot[data-state="open"] {
   animation: slideIn 150ms cubic-bezier(0.16, 1, 0.3, 1);
 }
-#ToastRoot[data-state='closed'] {
+#ToastRoot[data-state="closed"] {
   animation: hide 100ms ease-in;
 }
-#ToastRoot[data-swipe='move'] {
+#ToastRoot[data-swipe="move"] {
   transform: translateX(var(--radix-toast-swipe-move-x));
 }
-#ToastRoot[data-swipe='cancel'] {
+#ToastRoot[data-swipe="cancel"] {
   transform: translateX(0);
   transition: transform 200ms ease-out;
 }
-#ToastRoot[data-swipe='end'] {
+#ToastRoot[data-swipe="end"] {
   animation: swipeOut 100ms ease-out;
 }
 

@@ -5,7 +5,6 @@ import Table from "../Shared/Table";
 import { EditSvg } from "../../icons/AllSvgs";
 import Search from "../Shared/Search";
 import UserFormModal from "./UserFormModal";
-import TableFilters from "../Shared/TableFilters";
 import LoadingSvg from "../../assets/loading.svg";
 import { useToggleUserStatus, useUsersData } from "../../hooks/useQueryData";
 import { IUserData } from "../../types";
@@ -16,13 +15,17 @@ import { useUpdateProfileMutation } from "../../hooks/useMutateData";
 import { SubmitHandler } from "react-hook-form";
 import { useToast } from "../../contexts/ToastContext";
 import debounce from "../../utils/debounce";
+import { useAuth } from "../../contexts/AuthContext";
 
 const columnHelper = createColumnHelper<IUserData>();
 
 export default function UserTable() {
+  const { auth } = useAuth();
   const [page, setPage] = useState<number>(1);
   const [searchValue, setSearchValue] = useState<string>("");
   const [selectedId, setSelectedId] = useState<number>();
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [selectedRow, setSelectedRow] = useState<IUserData>();
   const { data, isLoading, isError, refetch } = useUsersData({
     page,
     username: searchValue,
@@ -88,18 +91,19 @@ export default function UserTable() {
                 setSelectedId(row.original.id);
               }}
             >
-              <UserFormModal
-                isEdit={true}
-                data={row?.original}
-                handleUpdate={handleUpdateUser}
-                triggerClassName="cursor-pointer text-grayHeading hover:text-primary"
+              <button
+                className="cursor-pointer text-grayHeading hover:text-primary"
+                onClick={() => {
+                  setIsModalOpen(true);
+                  setSelectedRow(row.original);
+                }}
               >
                 <Tooltip content="Edit" asChild>
                   <span>
                     <EditSvg className="h-6" />
                   </span>
                 </Tooltip>
-              </UserFormModal>
+              </button>
             </div>
           );
         },
@@ -108,10 +112,10 @@ export default function UserTable() {
     []
   );
 
-  const updateProfileMutation = useUpdateProfileMutation(selectedId);
+  const updateProfileMutation = useUpdateProfileMutation();
 
   const handleUpdateUser: SubmitHandler<IUserData> = async (data) => {
-    await updateProfileMutation.mutateAsync(["put", "", data], {
+    await updateProfileMutation.mutateAsync(["put", selectedId, data], {
       onSuccess: (res) => {
         refetch();
         updateToast(res?.message, "success");
@@ -125,17 +129,14 @@ export default function UserTable() {
     });
   };
 
+  const showEditUserActions = auth.permissions?.some(
+    (item) => item.permission_id === 2
+  );
+
   return (
     <section>
       <div className="mb-4 flex justify-between">
         <div className="flex gap-4 flex-row-reverse justify-between w-full">
-          {/* <TableFilters
-            sortOptions={[
-              { value: "name", label: "Name" },
-              { value: "email", label: "Email" },
-            ]}
-          /> */}
-
           <Search
             placeholder="Search Users"
             className="shadow w-[316px]"
@@ -159,12 +160,19 @@ export default function UserTable() {
           isError={isError}
           isLoading={isLoading}
           totalEntries={data?.totalPages}
-          containsActions
+          containsActions={showEditUserActions}
           currentPage={data?.currentPage || 1}
           showFooter
           pageChangeHandler={(page) => setPage(page)}
         />
       )}
+      <UserFormModal
+        isEdit={true}
+        isModalOpen={isModalOpen}
+        setIsModalOpen={setIsModalOpen}
+        data={selectedRow}
+        handleUpdate={handleUpdateUser}
+      />
     </section>
   );
 }

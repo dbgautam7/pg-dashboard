@@ -6,8 +6,6 @@ import InputField from "../UI/InputField";
 
 interface Props {
   data?: IUserData;
-  children: React.ReactNode;
-  triggerClassName?: string;
   isEdit?: boolean;
   handleCreate?: (d: any) => void;
   handleUpdate?: (d: any) => void;
@@ -17,8 +15,6 @@ interface Props {
 
 export default function UserFormModal({
   data,
-  children,
-  triggerClassName = "",
   isEdit = false,
   handleCreate,
   handleUpdate,
@@ -28,7 +24,6 @@ export default function UserFormModal({
   const { register, handleSubmit } = useForm<IUserData>();
   return (
     <Dialog.Root open={isModalOpen} onOpenChange={setIsModalOpen}>
-      <Dialog.Trigger className={triggerClassName}>{children}</Dialog.Trigger>
       <Dialog.Portal>
         <Dialog.Overlay className="overlay" />
         <Dialog.Content className="modal-content px-8 py-6">

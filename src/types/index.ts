@@ -1,6 +1,28 @@
 export interface IAuthDetails {
   token: string;
-  user?: unknown;
+  userInfo?: {
+    id?: number;
+    current_role_id?: number;
+    created_by?: number;
+    code?: string;
+    name?: string;
+    email?: string;
+    password?: string;
+    phone?: string;
+    status?: string;
+    status_remarks?: null;
+    remember_token?: null;
+    profile_image?: null;
+    verified_at?: Date;
+    created_at?: Date;
+    updated_at?: Date;
+  };
+  permissions?:
+    | {
+        permission_id: number;
+        permission_name: string;
+      }[]
+    | null;
 }
 
 export interface IUserData {
