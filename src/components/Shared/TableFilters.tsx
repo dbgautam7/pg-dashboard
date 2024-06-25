@@ -11,7 +11,7 @@ interface Props {
   orderChangeHandler?: (value: string) => void;
   clearFilterHandler?: () => void;
   sort?: {
-    by: string;
+    by: string | number;
     order: string;
   };
 }

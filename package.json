@@ -9,8 +9,7 @@
     "lint": "eslint src/ --ext .ts,.tsx,.cjs,.mjs --fix --ignore-path .gitignore",
     "format": "prettier --write \"**/*.{js,ts,tsx,css,json,md,yml,yaml}\"",
     "format:check": "prettier --check \"**/*.{js,ts,tsx,css,json,md,yml,yaml}\"",
-    "typecheck": "tsc --noEmit",
-    "prepare": "husky install"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@radix-ui/react-alert-dialog": "^1.0.2",
